@@ -26,10 +26,16 @@ jobs:
         run: echo "Running CI only when branch is up-to-date"
 ```
 
-## Parameters
+## Inputs
 
-| Parameter | Description | Required | Default |
+| Input | Description | Required | Default |
 | - | - | - | - |
 | `head_branch` | Filename of the workflow that generated artifacts you want to delete  | ❌ | `github.head_ref` |
 | `base_branch` | GitHub repository you want to delete the artifact in | ❌ | `github.base_ref` |
 | `github_token` | GitHub token used to authenticate you GitHub API calls | ❌ | `github.token` |
+
+## Outputs
+
+| Output | Description |
+| -------| ----------- |
+| `up_to_date` | `"true"` if the `head_branch` is up-to-date with the `base_branch`, otherwise `"false"` |

@@ -17,12 +17,29 @@ inputs:
     description: "GitHub token"
     required: false
     default: ${{ github.token }}
+
+outputs:
+  up_to_date:
+    description: '"true" or "false"'
+    value: ${{ steps.check.outputs.up_to_date }}
+
 runs:
   using: "composite"
   steps:
     - shell: bash
+      id: check
       run: |
-        git branch "$HEAD_BRANCH" --contains "$BASE_BRANCH"
+        BASE_BRANCH="remotes/origin/$BASE_BRANCH"
+        HEAD_BRANCH_WITH_BASE_BRANCH=$(git branch "$HEAD_BRANCH" --contains "$BASE_BRANCH" | wc -l)
+
+        if [ $HEAD_BRANCH_WITH_BASE_BRANCH -eq 0 ]; then
+          echo "Branch $HEAD_BRANCH is NOT up to date with $BASE_BRANCH"
+          echo ::set-output name=up_to_date::false
+        else
+          echo "Branch $HEAD_BRANCH is up to date with $BASE_BRANCH"
+          echo ::set-output name=up_to_date::true
+        fi
+
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
         HEAD_BRANCH: ${{ inputs.head_branch }}
