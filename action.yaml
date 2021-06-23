@@ -29,8 +29,17 @@ runs:
     - shell: bash
       id: check
       run: |
-        BASE_BRANCH="remotes/origin/$BASE_BRANCH"
-        HEAD_BRANCH_WITH_BASE_BRANCH=$(git branch "$HEAD_BRANCH" --contains "$BASE_BRANCH" | wc -l)
+        git fetch
+
+        HEAD_BRANCH="origin/$HEAD_BRANCH"
+        BASE_BRANCH="origin/$BASE_BRANCH"
+        BASE_BRANCH_HEAD_COMMIT=$(git rev-parse "$BASE_BRANCH")
+        HEAD_BRANCH_WITH_BASE_BRANCH=$(git branch -r "$HEAD_BRANCH" --contains "$BASE_BRANCH_HEAD_COMMIT" | wc -l)
+
+        echo "HEAD_BRANCH=$HEAD_BRANCH"
+        echo "BASE_BRANCH=$BASE_BRANCH"
+        echo "BASE_BRANCH_HEAD_COMMIT=$BASE_BRANCH_HEAD_COMMIT"
+        echo "HEAD_BRANCH_WITH_BASE_BRANCH=$HEAD_BRANCH_WITH_BASE_BRANCH"
 
         if [ $HEAD_BRANCH_WITH_BASE_BRANCH -eq 0 ]; then
           echo "Branch $HEAD_BRANCH is NOT up to date with $BASE_BRANCH"
