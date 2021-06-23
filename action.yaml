@@ -1,0 +1,29 @@
+name: "Check the branch is up to date with another one"
+description: "Check if branch contains all commits from another branch"
+author: Štefan Ľupták
+branding:
+  icon: check-circle
+  color: green
+inputs:
+  head_branch:
+    description: "branch that should include all the commits from the `base_branch`"
+    required: false
+    default: ${{ github.head_ref }}
+  base_branch:
+    description: "branch that the `head_branch` should be up-to-date with"
+    required: false
+    default: ${{ github.base_ref }}
+  github_token:
+    description: "GitHub token"
+    required: false
+    default: ${{ github.token }}
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        git branch "$HEAD_BRANCH" --contains "$BASE_BRANCH"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        HEAD_BRANCH: ${{ inputs.head_branch }}
+        BASE_BRANCH: ${{ inputs.base_branch }}
